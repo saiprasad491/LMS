@@ -1,6 +1,7 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, api } from 'lwc';
 
 export default class AllUsers extends LightningElement {
+  @api usersData = [];
   @track users = [
     {
       id: '1',
@@ -41,6 +42,7 @@ export default class AllUsers extends LightningElement {
   ];
 
   get hasUsers() {
-    return this.users && this.users.length > 0;
+    console.log('all users component : ', this.usersData);
+    return this.usersData && this.usersData.length > 0;
   }
 }

@@ -126,7 +126,7 @@
 
           <!-- All Users View -->
           <template if:true={showAllUsers}>
-            <c-all-users></c-all-users>
+            <c-all-users users-data={allUserDetails} ></c-all-users>
           </template>
 
           <!-- All Leaves View -->
@@ -135,6 +135,7 @@
               <h2>All Leaves</h2>
               <p>Leaves management content will be displayed here.</p>
             </div>
+            <c-all-leaves leaves-data={allUserLeaves} ></c-all-leaves>
           </template>
 
           <!-- Statistics View -->

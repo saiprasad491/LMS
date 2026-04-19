@@ -1,4 +1,6 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
+import getUsers from '@salesforce/apex/CustomUsers.getUsers';
+import getUserLeaves from '@salesforce/apex/UserLeaves.getUserLeaves';
 
 export default class MainLayout extends LightningElement {
   @track isAuthenticated = false;
@@ -6,6 +8,8 @@ export default class MainLayout extends LightningElement {
   @track currentUser = '';
   @track sidebarCollapsed = false;
   @track currentView = 'dashboard';
+  @track allUserDetails = [];
+  @track allUserLeaves = [];
 
   handleLoginSuccess(event) {
     this.currentUser = event.detail.username;
@@ -37,7 +41,10 @@ export default class MainLayout extends LightningElement {
   handleNavigation(event) {
     event.preventDefault();
     const view = event.currentTarget.dataset.view;
+    console.log('Navigating to:', view);
+    console.log('Previous view:', this.currentView);
     this.currentView = view;
+    console.log('New view:', this.currentView);
     
     // Update active state
     this.template.querySelectorAll('.nav-item').forEach(item => {
@@ -69,4 +76,30 @@ export default class MainLayout extends LightningElement {
   get showStatistics() {
     return this.currentView === 'statistics';
   }
+
+  @wire(getUsers)
+    wiredUsers({ data, error }) {
+        if (data) {
+            this.allUserDetails = data;
+            console.log(data);
+        } else if (error) {
+           console.log(`Error occured in fetching user details ${error.message}`);
+        }
+    }
+
+  @wire(getUserLeaves)
+  wiredLeaves({data,error}){
+    if(data){
+      this.allUserLeaves = data;
+      console.log(data);
+    }else{
+      console.log(`Error occurred in fetching leave details ${error.meessage}`);
+    }
+  }
+
+  // life cycle hooks
+  connectedCallback() {
+    
+  }
+
 }
