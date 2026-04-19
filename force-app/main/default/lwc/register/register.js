@@ -1,6 +1,18 @@
 import { LightningElement, track } from 'lwc';
 
 export default class Register extends LightningElement {
+  
+  handleBackToLogin(event) {
+    if (event) {
+      event.preventDefault();
+    }
+    // Dispatch event to parent to go back to login
+    const backToLoginEvent = new CustomEvent('backtologin', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(backToLoginEvent);
+  }
   @track username = '';
   @track email = '';
   @track password = '';
@@ -65,9 +77,7 @@ export default class Register extends LightningElement {
 
   handleLoginClick(event) {
     event.preventDefault();
-    
-    // Dispatch custom event to navigate to login page
-    const loginEvent = new CustomEvent('navigatetologin');
-    this.dispatchEvent(loginEvent);
+    // Call the back to login handler which dispatches the proper event
+    this.handleBackToLogin(event);
   }
 }

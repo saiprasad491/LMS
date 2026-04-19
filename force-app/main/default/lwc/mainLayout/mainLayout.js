@@ -2,13 +2,30 @@ import { LightningElement, track } from 'lwc';
 
 export default class MainLayout extends LightningElement {
   @track isAuthenticated = false;
-  @track hasAccount = true;
+  @track currentUser = '';
+  @track showRegister = false;
 
-  handleNavigateToRegister() {
-    this.hasAccount = false;
+  handleLoginSuccess(event) {
+    // Handle successful login from login component
+    this.currentUser = event.detail.username;
+    this.isAuthenticated = true;
+    this.showRegister = false;
   }
 
-  handleNavigateToLogin() {
-    this.hasAccount = true;
+  handleLogout() {
+    // Reset authentication state
+    this.isAuthenticated = false;
+    this.currentUser = '';
+    this.showRegister = false;
+  }
+
+  handleShowRegister() {
+    // Show register component
+    this.showRegister = true;
+  }
+
+  handleBackToLogin() {
+    // Show login component
+    this.showRegister = false;
   }
 }

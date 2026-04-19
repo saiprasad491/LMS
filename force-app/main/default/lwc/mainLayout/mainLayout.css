@@ -259,6 +259,31 @@
   color: var(--color-text-primary);
 }
 
+.logout-btn {
+  width: 36px;
+  height: 36px;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  color: var(--color-text-secondary);
+  margin-left: 8px;
+}
+
+.logout-btn:hover {
+  background-color: #FEE2E2;
+  border-color: #FCA5A5;
+  color: #DC2626;
+}
+
+.logout-btn:active {
+  transform: scale(0.95);
+}
+
 /* Page Content */
 .page-content {
   flex: 1;

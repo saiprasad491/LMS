@@ -1,13 +1,10 @@
-import { LightningElement, track, api } from 'lwc';
-import { NavigationMixin } from 'lightning/navigation';
+import { LightningElement, track } from 'lwc';
 
-export default class Login extends NavigationMixin(LightningElement) {
+export default class Login extends LightningElement {
   @track username = '';
   @track password = '';
   @track showPassword = false;
   @track errorMessage = '';
-
-  @api hasAccount ;
 
   get passwordType() {
     return this.showPassword ? 'text' : 'password';
@@ -34,29 +31,30 @@ export default class Login extends NavigationMixin(LightningElement) {
     
     // Validate credentials
     if (this.username === 'admin' && this.password === 'admin') {
-      // Authentication successful - navigate to mainLayout
-      this.navigateToMainLayout();
+      // Authentication successful - dispatch event to parent
+      const loginSuccessEvent = new CustomEvent('loginsuccess', {
+        detail: { username: this.username },
+        bubbles: true,
+        composed: true
+      });
+      this.dispatchEvent(loginSuccessEvent);
+      
+      // Clear form
+      this.username = '';
+      this.password = '';
     } else {
       // Authentication failed
       this.errorMessage = 'Invalid username or password. Please try again.';
     }
   }
 
-  navigateToMainLayout() {
-    // Dispatch custom event to parent component to show mainLayout
-    const loginSuccessEvent = new CustomEvent('loginsuccess', {
-      detail: {
-        username: this.username
-      }
-    });
-    this.dispatchEvent(loginSuccessEvent);
-  }
-
   handleRegisterClick(event) {
     event.preventDefault();
-    
-    // Dispatch custom event to navigate to register page
-    const registerEvent = new CustomEvent('navigatetoregister');
-    this.dispatchEvent(registerEvent);
+    // Dispatch event to parent to show register component
+    const showRegisterEvent = new CustomEvent('showregister', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(showRegisterEvent);
   }
 }

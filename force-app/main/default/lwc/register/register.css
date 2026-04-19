@@ -29,7 +29,7 @@
   background: var(--color-bg-secondary);
   border-radius: 16px;
   box-shadow: var(--shadow-xl);
-  padding: 48px 40px;
+  padding: 32px 40px 36px;
   animation: slideUp 0.4s ease-out;
 }
 
@@ -47,32 +47,32 @@
 /* Auth Header */
 .auth-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .logo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
-  border-radius: 20px;
+  border-radius: 16px;
   color: white;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .auth-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--color-text-primary);
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   letter-spacing: -0.5px;
 }
 
 .auth-subtitle {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -81,13 +81,13 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .form-label {
@@ -161,8 +161,8 @@
 /* Primary Button */
 .btn-primary {
   width: 100%;
-  padding: 14px 24px;
-  font-size: 16px;
+  padding: 12px 24px;
+  font-size: 15px;
   font-weight: 600;
   color: white;
   background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
@@ -172,7 +172,7 @@
   transition: var(--transition);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   letter-spacing: 0.3px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .btn-primary:hover {
@@ -186,7 +186,7 @@
 
 /* Auth Footer */
 .auth-footer {
-  margin-top: 28px;
+  margin-top: 20px;
   text-align: center;
 }
 
