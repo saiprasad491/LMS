@@ -54,6 +54,10 @@ export default class MainLayout extends LightningElement {
     return this.currentView === 'dashboard';
   }
 
+  get showLeaveRequest(){
+    return this.currentView === 'leaveRequest';
+  }
+
   get showAllUsers() {
     return this.currentView === 'allUsers';
   }
