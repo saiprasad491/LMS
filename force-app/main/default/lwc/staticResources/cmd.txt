@@ -1,0 +1,22 @@
+>sf org list
+
+>sf org open
+
+>>sf project retrieve preview
+
+>sf project retrieve start
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
