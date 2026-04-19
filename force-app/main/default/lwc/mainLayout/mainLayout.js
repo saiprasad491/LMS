@@ -2,30 +2,36 @@ import { LightningElement, track } from 'lwc';
 
 export default class MainLayout extends LightningElement {
   @track isAuthenticated = false;
-  @track currentUser = '';
   @track showRegister = false;
+  @track currentUser = '';
+  @track sidebarCollapsed = false;
 
   handleLoginSuccess(event) {
-    // Handle successful login from login component
     this.currentUser = event.detail.username;
     this.isAuthenticated = true;
     this.showRegister = false;
   }
 
   handleLogout() {
-    // Reset authentication state
     this.isAuthenticated = false;
     this.currentUser = '';
     this.showRegister = false;
+    this.sidebarCollapsed = false;
   }
 
   handleShowRegister() {
-    // Show register component
     this.showRegister = true;
   }
 
   handleBackToLogin() {
-    // Show login component
     this.showRegister = false;
+  }
+
+  toggleSidebar() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
+
+  get sidebarClass() {
+    return this.sidebarCollapsed ? 'sidebar collapsed' : 'sidebar';
   }
 }

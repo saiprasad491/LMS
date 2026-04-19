@@ -155,6 +155,36 @@
   transition: var(--transition);
 }
 
+/* Sidebar Collapsed State */
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar.collapsed .logo-text,
+.sidebar.collapsed .nav-label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  padding: 24px 10px;
+}
+
+.sidebar.collapsed .logo-container {
+  justify-content: center;
+}
+
+.sidebar.collapsed .nav-link {
+  justify-content: center;
+  padding: 12px;
+}
+
+.sidebar.collapsed .toggle-btn {
+  transform: rotate(180deg);
+}
+
 /* Content Wrapper */
 .content-wrapper {
   flex: 1;

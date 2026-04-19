@@ -1,12 +1,10 @@
 <template>
   <!-- Login/Register - Show when not authenticated -->
   <template if:false={isAuthenticated}>
-    <!-- Show Register Component -->
     <template if:true={showRegister}>
       <c-register onbacktologin={handleBackToLogin}></c-register>
     </template>
     
-    <!-- Show Login Component -->
     <template if:false={showRegister}>
       <c-login 
         onloginsuccess={handleLoginSuccess}
@@ -18,9 +16,8 @@
   <!-- Main Layout Content - Show when authenticated -->
   <template if:true={isAuthenticated}>
     <div class="main-container">
-      
       <!-- Sidebar Navigation -->
-      <aside class="sidebar">
+      <aside class={sidebarClass}>
         <div class="sidebar-header">
           <div class="logo-container">
             <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
