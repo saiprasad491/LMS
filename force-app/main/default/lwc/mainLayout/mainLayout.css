@@ -318,8 +318,37 @@
 .page-content {
   flex: 1;
   overflow-y: auto;
-  padding: 32px;
+  padding: 0;
   background-color: var(--color-bg-primary);
+  height: 100%;
+}
+
+/* Placeholder content styles */
+.dashboard-content,
+.leaves-content,
+.statistics-content {
+  padding: 2rem;
+  background-color: white;
+  margin: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-content h2,
+.leaves-content h2,
+.statistics-content h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 1rem 0;
+}
+
+.dashboard-content p,
+.leaves-content p,
+.statistics-content p {
+  font-size: 1rem;
+  color: #718096;
+  margin: 0;
 }
 
 /* Auth Placeholder */
