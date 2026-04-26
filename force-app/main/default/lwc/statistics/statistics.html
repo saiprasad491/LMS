@@ -1,0 +1,92 @@
+<template>
+    <div class="statistics-container">
+        <div class="page-header">
+            <h2 class="page-title">Leave Statistics</h2>
+        </div>
+
+        <template if:true={hasData}>
+            <div class="stats-grid">
+                <!-- Total Employees Card -->
+                <div class="stat-card">
+                    <div class="stat-icon employees">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Employees</p>
+                        <p class="stat-value">{totalEmployees}</p>
+                    </div>
+                </div>
+
+                <!-- Total Allocated Leaves Card -->
+                <div class="stat-card">
+                    <div class="stat-icon allocated">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Allocated Leaves</p>
+                        <p class="stat-value">{totalAllocated}</p>
+                    </div>
+                </div>
+
+                <!-- Total Consumed Leaves Card -->
+                <div class="stat-card">
+                    <div class="stat-icon consumed">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Consumed Leaves</p>
+                        <p class="stat-value">{totalConsumed}</p>
+                    </div>
+                </div>
+
+                <!-- Total Remaining Leaves Card -->
+                <div class="stat-card">
+                    <div class="stat-icon remaining">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Remaining Leaves</p>
+                        <p class="stat-value">{totalRemaining}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bars Section -->
+            <div class="progress-section">
+                <div class="progress-card">
+                    <h3 class="progress-title">Leave Utilization</h3>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style={utilizationStyle}></div>
+                    </div>
+                    <p class="progress-label">{utilizationPercentage}% of allocated leaves consumed</p>
+                </div>
+
+                <div class="progress-card">
+                    <h3 class="progress-title">Leave Availability</h3>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar available" style={availabilityStyle}></div>
+                    </div>
+                    <p class="progress-label">{availabilityPercentage}% of leaves still available</p>
+                </div>
+            </div>
+        </template>
+
+        <!-- Empty State -->
+        <template if:false={hasData}>
+            <div class="empty-state">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor" opacity="0.3">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                </svg>
+                <p class="empty-message">No statistics available</p>
+            </div>
+        </template>
+    </div>
+</template>

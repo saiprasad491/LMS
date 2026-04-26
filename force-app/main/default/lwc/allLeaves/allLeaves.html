@@ -1,61 +1,46 @@
 <template>
-    <template lwc:if={leavesData}>
+    <template lwc:if={hasLeaves}>
         <div class="slds-table_container">
             <table class="slds-table slds-table_cell-buffer slds-table_bordered" role="grid" aria-label="Employee Leaves">
+                
+                <!-- Table Header -->
                 <thead>
                     <tr class="slds-line-height_reset">
-                        <th scope="col">
-                            <div class="slds-truncate" title="Serial Number">SL No.</div>
-                        </th>
-                        <th scope="col">
-                            <div class="slds-truncate" title="Employee Name">Employee Name</div>
-                        </th>
-                        <th scope="col">
-                            <div class="slds-truncate" title="Leave Type">Leave Type</div>
-                        </th>
-                        <th scope="col">
-                            <div class="slds-truncate" title="Total Allocated Leaves">Total Allocated Leaves</div>
-                        </th>
-                        <th scope="col">
-                            <div class="slds-truncate" title="Total Consumed Leaves">Total Consumed Leaves</div>
-                        </th>
-                        <th scope="col">
-                            <div class="slds-truncate" title="Remaining Leaves">Remaining Leaves</div>
-                        </th>
+                        <th scope="col"><div class="slds-truncate" title="Serial Number">SL No.</div></th>
+                        <th scope="col"><div class="slds-truncate" title="Employee Name">Employee Name</div></th>
+                        <th scope="col"><div class="slds-truncate" title="Leave Type">Leave Type</div></th>
+                        <th scope="col"><div class="slds-truncate" title="Total Allocated Leaves">Total Allocated Leaves</div></th>
+                        <th scope="col"><div class="slds-truncate" title="Total Consumed Leaves">Total Consumed Leaves</div></th>
+                        <th scope="col"><div class="slds-truncate" title="Remaining Leaves">Remaining Leaves</div></th>
                     </tr>
                 </thead>
+
+                <!-- Table Body -->
                 <tbody>
-                    <template for:each={leavesData} for:item="leave" for:index="index">
-                        <tr key={leave.employeeName} class="slds-hint-parent">
-                            <td role="gridcell">
-                                <div class="slds-truncate">{1}</div>
-                            </td>
-                            <td role="gridcell">
-                                <div class="slds-truncate">{leave.Custom_User__r.Name}</div>
-                            </td>
-                            <td role="gridcell">
-                                <div class="slds-truncate">{leave.Leave_Type__c}</div>
-                            </td>
-                            <td role="gridcell">
-                                <div class="slds-truncate">{leave.Total_Allocated__c}</div>
-                            </td>
-                            <td role="gridcell">
-                                <div class="slds-truncate">{leave.Total_Consumed__c }</div>
-                            </td>
-                            <td role="gridcell">
-                                <div class="slds-truncate">{leave.Total_Allocated__c - leave.Total_Consumed__c}</div>
-                            </td>
+                    <template for:each={leavesData} for:item="leave">
+                        <tr key={leave.serialNo} class="slds-hint-parent">
+                            <td><div class="slds-truncate">{leave.serialNo}</div></td>
+                            <td><div class="slds-truncate">{leave.employeeName}</div></td>
+                            <td><div class="slds-truncate">{leave.leaveType}</div></td>
+                            <td><div class="slds-truncate">{leave.allocatedLeaves}</div></td>
+                            <td><div class="slds-truncate">{leave.consumedLeaves}</div></td>
+                            <td><div class="slds-truncate">{leave.remainingLeaves}</div></td>
                         </tr>
                     </template>
                 </tbody>
+
             </table>
         </div>
     </template>
+
+    <!-- Empty State -->
     <template lwc:else>
         <div class="slds-illustration slds-illustration_small">
             <div class="slds-text-align_center slds-text-color_weak">
                 <p class="slds-text-heading_medium">No Leave Data Available</p>
-                <p class="slds-text-body_regular">There are currently no leave records to display.</p>
+                <p class="slds-text-body_regular">
+                    There are currently no leave records to display.
+                </p>
             </div>
         </div>
     </template>

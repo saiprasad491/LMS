@@ -1,3 +1,67 @@
 <template>
-    <lightning-card title="Leave Request" ></lightning-card>
+    <lightning-card title="Leave Request" class="compact-card">
+        <div class="slds-p-horizontal_small slds-p-vertical_x-small">
+            <div class="slds-grid slds-wrap slds-grid_pull-padded-small">
+                <div class="slds-col slds-size_1-of-2 slds-p-horizontal_small">
+                    <lightning-input
+                        type="date"
+                        label="From"
+                        value={fromDate}
+                        data-field="fromDate"
+                        onchange={handleChange}
+                        class="compact-input">
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-horizontal_small">
+                    <lightning-input
+                        type="date"
+                        label="To"
+                        value={toDate}
+                        data-field="toDate"
+                        onchange={handleChange}
+                        class="compact-input">
+                    </lightning-input>
+                </div>
+            </div>
+
+            <div class="slds-grid slds-wrap slds-grid_pull-padded-small slds-m-top_small">
+                <div class="slds-col slds-size_1-of-1 slds-p-horizontal_small">
+                    <lightning-combobox
+                        label="Leave Type"
+                        options={leaveTypeOptions}
+                        value={leaveType}
+                        data-field="leaveType"
+                        onchange={handleChange}
+                        class="compact-input">
+                    </lightning-combobox>
+                </div>
+            </div>
+
+            <div class="slds-grid slds-wrap slds-grid_pull-padded-small slds-m-top_small">
+                <div class="slds-col slds-size_1-of-1 slds-p-horizontal_small">
+                    <lightning-textarea
+                        label="Reason"
+                        value={reason}
+                        data-field="reason"
+                        onchange={handleChange}
+                        class="compact-input">
+                    </lightning-textarea>
+                </div>
+            </div>
+
+            <div class="slds-grid slds-grid_align-end slds-m-top_medium slds-p-horizontal_small">
+                <lightning-button
+                    label="Cancel"
+                    variant="neutral"
+                    onclick={handleCancel}
+                    class="slds-m-right_small">
+                </lightning-button>
+                <lightning-button
+                    label="Apply"
+                    variant="brand"
+                    onclick={handleApply}>
+                </lightning-button>
+            </div>
+        </div>
+    </lightning-card>
 </template>

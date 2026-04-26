@@ -83,7 +83,7 @@ export default class MainLayout extends LightningElement {
             this.allUserDetails = data;
             console.log(data);
         } else if (error) {
-           console.log(`Error occured in fetching user details ${error.message}`);
+           console.log(`Error occured in fetching user details ${error}`);
         }
     }
 
@@ -92,8 +92,8 @@ export default class MainLayout extends LightningElement {
     if(data){
       this.allUserLeaves = data;
       console.log(data);
-    }else{
-      console.log(`Error occurred in fetching leave details ${error.meessage}`);
+    }else if(error){
+      console.log(`Error occurred in fetching leave details ${error}`);
     }
   }
 

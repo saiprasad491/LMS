@@ -131,19 +131,12 @@
 
           <!-- All Leaves View -->
           <template if:true={showAllLeaves}>
-            <div class="leaves-content">
-              <h2>All Leaves</h2>
-              <p>Leaves management content will be displayed here.</p>
-            </div>
-            <c-all-leaves leaves-data={allUserLeaves} ></c-all-leaves>
+            <c-all-leaves leaves-data={allUserLeaves}></c-all-leaves>
           </template>
 
           <!-- Statistics View -->
           <template if:true={showStatistics}>
-            <div class="statistics-content">
-              <h2>Statistics</h2>
-              <p>Statistics and reports will be displayed here.</p>
-            </div>
+            <c-statistics leaves-data={allUserLeaves}></c-statistics>
           </template>
         </main>
       </div>

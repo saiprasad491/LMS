@@ -1,0 +1,5 @@
+<apex:page controller="LeaveApprovalController" action="{!processApproval}" showHeader="false" sidebar="false">
+    <apex:pageMessages />
+    <h1>Leave Request Processed</h1>
+    <p>The leave request has been {!action}.</p>
+</apex:page>
