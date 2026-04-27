@@ -11,6 +11,29 @@ public with sharing class UserLeaves {
         }
     }
     
+    /**
+     * Returns User_Leaves__c records for a specific custom user.
+     *
+     * @param userId Id of the custom user (Custom_User__c)
+     * @return List<User_Leaves__c> filtered by Custom_User__c
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<User_Leaves__c> getUserLeavesForUser(Id userId) {
+        try {
+            if (userId == null || String.isBlank(String.valueOf(userId))) {
+                return new List<User_Leaves__c>();
+            }
+            return [
+                SELECT Name, Custom_User__r.Name, Leave_Type__c, Total_Allocated__c, Total_Consumed__c, Remaining_Leaves__c
+                FROM User_Leaves__c
+                WHERE Custom_User__c = :userId
+            ];
+        } catch (Exception e) {
+            System.debug('Error fetching user leaves for userId ' + userId + ': ' + e.getMessage());
+            return new List<User_Leaves__c>();
+        }
+    }
+    
     @AuraEnabled(cacheable=true)
     public static List<Leave_Request__c> getCurrentUserLeaveRequests(String userId) {        
         try {

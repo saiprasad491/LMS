@@ -1,76 +1,121 @@
 <template>
-    <div class="statistics-container">
-        <div class="page-header">
-            <h2 class="page-title">Leave Statistics by Type</h2>
-            <p class="page-subtitle">View leave allocation, consumption, and availability for each leave type</p>
-        </div>
+    <div class="statistics-root">
+        <!-- Header -->
+        <header class="stats-header">
+            <h2>Leave Statistics</h2>
 
-        <template if:true={hasData}>
-            <!-- Donut Charts Row - One chart per leave type -->
-            <div class="donut-charts-row">
-                <template for:each={leaveTypeStats} for:item="leaveType">
-                    <div key={leaveType.id} class="donut-chart-card">
-                        <div class="donut-chart">
-                            <svg viewBox="0 0 200 200" class="donut-svg">
-                                <!-- Background circle -->
-                                <circle
-                                    class="donut-background"
-                                    cx="100"
-                                    cy="100"
-                                    r="70"
-                                    fill="transparent"
-                                    stroke="#e0e0e0"
-                                    stroke-width="20"
-                                ></circle>
-                                <!-- Consumed portion -->
-                                <circle
-                                    class="donut-segment"
-                                    cx="100"
-                                    cy="100"
-                                    r="70"
-                                    fill="transparent"
-                                    stroke={leaveType.color.stroke}
-                                    stroke-width="20"
-                                    stroke-dasharray={leaveType.donutData.circumference}
-                                    stroke-dashoffset={leaveType.donutData.offset}
-                                    transform="rotate(-90 100 100)"
-                                ></circle>
-                            </svg>
-                            <div class="donut-center">
-                                <div class="donut-value">{leaveType.totalConsumed}</div>
-                                <div class="donut-sublabel">of {leaveType.totalAllocated}</div>
-                                <div class="donut-label">{leaveType.consumedPercentage}% Used</div>
-                            </div>
-                        </div>
-                        <div class="chart-title">{leaveType.leaveType}</div>
-                        <div class="chart-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">Allocated:</span>
-                                <span class="stat-value allocated">{leaveType.totalAllocated}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Consumed:</span>
-                                <span class="stat-value consumed">{leaveType.totalConsumed}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Remaining:</span>
-                                <span class="stat-value remaining">{leaveType.totalRemaining}</span>
-                            </div>
-                        </div>
-                    </div>
-                </template>
+            <div class="totals">
+                <div class="total-card total-allocated">
+                    <div class="label">Allocated</div>
+                    <div class="value">{totalAllocated}</div>
+                </div>
+
+                <div class="total-card total-consumed">
+                    <div class="label">Consumed</div>
+                    <div class="value">{totalConsumed}</div>
+                </div>
+
+                <div class="total-card total-remaining">
+                    <div class="label">Remaining</div>
+                    <div class="value">{totalRemaining}</div>
+                </div>
             </div>
-        </template>
+        </header>
 
         <!-- Empty State -->
         <template if:false={hasData}>
             <div class="empty-state">
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor" opacity="0.3">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
-                </svg>
-                <p class="empty-message">No statistics available</p>
-                <p class="empty-submessage">Leave data will appear here once employees are assigned leaves</p>
+                <p>No leave data available.</p>
             </div>
+        </template>
+
+        <!-- Data View -->
+        <template if:true={hasData}>
+            <section class="cards-grid">
+                <template for:each={leaveTypeStats} for:item="stat">
+                    <article key={stat.id} class="type-card">
+
+                        <!-- Top Section -->
+                        <div class="card-top">
+
+                            <!-- Donut -->
+                            <div 
+                                class="donut"
+                                title={stat.title}
+                                role="progressbar"
+                                aria-valuenow={stat.donutData.percentage}
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                            >
+                                <svg viewBox="0 0 160 160" class="donut-svg">
+                                    <!-- Background Circle -->
+                                    <circle 
+                                        class="donut-bg"
+                                        cx="80" cy="80" r="70"
+                                        stroke-width="20"
+                                        fill="none">
+                                    </circle>
+
+                                    <!-- Progress Arc -->
+                                    <circle
+                                        class="donut-arc"
+                                        cx="80" cy="80" r="70"
+                                        stroke-width="20"
+                                        fill="none"
+                                        stroke={stat.color.stroke}
+                                        stroke-dasharray={stat.donutData.circumference}
+                                        stroke-dashoffset={stat.donutData.offset}
+                                        stroke-linecap="round"
+                                        transform="rotate(-90 80 80)">
+                                    </circle>
+                                </svg>
+
+                                <!-- Center Text -->
+                                <div class="donut-center">
+                                    <div class="percent">
+                                        {stat.donutData.percentage}%
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Meta Info -->
+                            <div class="type-meta">
+                                <div class="type-label">{stat.leaveType}</div>
+
+                                <div class="type-numbers">
+                                    <span class="num allocated">
+                                        Allocated: {stat.totalAllocated}
+                                    </span>
+
+                                    <span class="num consumed">
+                                        Consumed: {stat.totalConsumed}
+                                    </span>
+
+                                    <span class="num remaining">
+                                        Remaining: {stat.totalRemaining}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="card-footer">
+                            <div class="consumed-bar">
+                                <div 
+                                    class="bar-fill"
+                                    style={stat.barStyle}>
+                                </div>
+                            </div>
+
+                            <div class="legend">
+                                <span class="legend-consumed">Consumed</span>
+                                <span class="legend-remaining">Remaining</span>
+                            </div>
+                        </div>
+
+                    </article>
+                </template>
+            </section>
         </template>
     </div>
 </template>

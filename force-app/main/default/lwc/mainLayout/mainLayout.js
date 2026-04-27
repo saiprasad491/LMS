@@ -1,6 +1,7 @@
 import { LightningElement, track, wire } from 'lwc';
 import getUsers from '@salesforce/apex/CustomUsers.getUsers';
 import getUserLeaves from '@salesforce/apex/UserLeaves.getUserLeaves';
+import getUserLeavesForUser from '@salesforce/apex/UserLeaves.getUserLeavesForUser';
 
 export default class MainLayout extends LightningElement {
   @track isAuthenticated = false;
@@ -28,6 +29,8 @@ export default class MainLayout extends LightningElement {
     this.isAuthenticated = true;
     this.showRegister = false;
     this.currentView = 'dashboard';
+    // Fetch leaves for the logged-in user so child components (statistics etc.) get per-user data
+    this.fetchLeavesForUser(this.currentUserId);
   }
 
   handleLogout() {
@@ -63,6 +66,11 @@ export default class MainLayout extends LightningElement {
       item.classList.remove('active');
     });
     event.currentTarget.parentElement.classList.add('active');
+
+    // If navigating to statistics, refresh leaves for the current user so stats are up-to-date
+    if (view === 'statistics' && this.currentUserId) {
+      this.fetchLeavesForUser(this.currentUserId);
+    }
   }
 
   get sidebarClass() {
@@ -99,13 +107,32 @@ export default class MainLayout extends LightningElement {
         }
     }
 
-  @wire(getUserLeaves)
-  wiredLeaves({data,error}){
-    if(data){
-      this.allUserLeaves = data;
-      console.log(data);
-    }else if(error){
-      console.log(`Error occurred in fetching leave details ${error}`);
+  // Previously wired to get all user leaves. Replace with per-user fetch when currentUserId changes.
+  // Keep the original wire commented for reference.
+  // @wire(getUserLeaves)
+  // wiredLeaves({data,error}){
+  //   if(data){
+  //     this.allUserLeaves = data;
+  //     console.log(data);
+  //   }else if(error){
+  //     console.log(`Error occurred in fetching leave details ${error}`);
+  //   }
+  // }
+
+  // Imperative fetch for leaves of the selected user
+    async fetchLeavesForUser(userId) {
+    if (!userId) {
+      this.allUserLeaves = [];
+      return;
+    }
+    try {
+      const data = await getUserLeavesForUser({ userId });
+      // Reassign a new array reference so child components' @api setters run when navigating
+      this.allUserLeaves = data ? [...data] : [];
+      console.log('Fetched leaves for user:', userId, this.allUserLeaves);
+    } catch (error) {
+      console.error('Error fetching leaves for user:', error);
+      this.allUserLeaves = [];
     }
   }
 

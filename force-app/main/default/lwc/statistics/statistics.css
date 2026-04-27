@@ -1,249 +1,215 @@
-.statistics-container {
-    padding: 1.5rem;
+.statistics-root {
+  padding: 1rem;
+  font-family: var(--lwc-font-family, Arial, sans-serif);
+  color: #1f2937;
 }
 
-.page-header {
-    margin-bottom: 2rem;
+.stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
-.page-title {
-    font-size: 1.875rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 0.5rem 0;
+.stats-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
-.page-subtitle {
-    font-size: 1rem;
-    color: #6b7280;
-    margin: 0;
+.totals {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
-/* Donut Charts Row - Dynamic grid based on leave types */
-.donut-charts-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
+.total-card {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 1px 3px rgba(16,24,40,0.05);
+  text-align: center;
+  min-width: 100px;
 }
 
-.donut-chart-card {
-    background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
+.total-card .label {
+  font-size: 0.75rem;
+  color: #6b7280;
 }
 
-.donut-chart-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+.total-card .value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
 }
 
-.donut-chart {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    margin: 0 auto 1.5rem;
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.type-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 1px 3px rgba(16,24,40,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+}
+
+.card-top {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.donut {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex: 0 0 88px;
+  cursor: default;
+}
+
+/* Tooltip styling */
+.donut[title] {
+  position: relative;
+}
+
+.donut:hover::after,
+.donut:focus::after {
+  content: attr(title);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translate(8px, -50%);
+  background: rgba(31,41,55,0.92);
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font-size: 12px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .donut-svg {
-    width: 100%;
-    height: 100%;
+  width: 88px;
+  height: 88px;
+}
+
+.donut-bg {
+  stroke: #e5e7eb;
 }
 
 .donut-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.donut-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1f2937;
-    line-height: 1;
-    margin-bottom: 0.25rem;
+.percent {
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
-.donut-sublabel {
-    font-size: 0.875rem;
-    color: #9ca3af;
-    margin-bottom: 0.25rem;
+.type-meta {
+  flex: 1;
 }
 
-.donut-label {
-    font-size: 1rem;
-    color: #6b7280;
-    font-weight: 600;
+.type-label {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
 }
 
-.chart-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid #f3f4f6;
+.type-numbers {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  color: #374151;
+  font-size: 0.85rem;
 }
 
-/* Chart Statistics */
-.chart-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    text-align: left;
+.num {
+  background: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
 }
 
-.stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0.75rem;
-    background: #f9fafb;
-    border-radius: 8px;
+.card-footer {
+  margin-top: 0.75rem;
 }
 
-.stat-label {
-    font-size: 0.875rem;
-    color: #6b7280;
-    font-weight: 500;
+.consumed-bar {
+  background: #f3f4f6;
+  height: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
 }
 
-.stat-value {
-    font-size: 1rem;
-    font-weight: 700;
-    padding: 0.25rem 0.75rem;
-    border-radius: 6px;
+/* Use CSS custom property --fill to control bar width and --bar-fill-color for color */
+.bar-fill {
+  height: 100%;
+  background: var(--bar-fill-color, linear-gradient(90deg, #4caf50, #81c784));
+  width: var(--fill, 0%);
+  transition: width 600ms ease;
 }
 
-.stat-value.allocated {
-    background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
-    color: white;
+.legend {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  color: #6b7280;
+  font-size: 0.8rem;
 }
 
-.stat-value.consumed {
-    background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
-    color: white;
+/* Assistive text for screen readers */
+.assistive-text {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+  border: 0;
+  padding: 0;
+  margin: -1px;
 }
 
-.stat-value.remaining {
-    background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%);
-    color: white;
+/* Legend list semantics */
+.legend[role="list"] {
+  display: flex;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+.legend span[role="listitem"]::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.legend .legend-consumed[role="listitem"]::before {
+  background: var(--consumed-color, #6ec2ff);
+}
+.legend .legend-remaining[role="listitem"]::before {
+  background: var(--remaining-color, #e0e0e0);
 }
 
-/* Empty State */
 .empty-state {
-    background: white;
-    border-radius: 12px;
-    padding: 4rem 2rem;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.empty-state svg {
-    margin-bottom: 1rem;
-}
-
-.empty-message {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #6b7280;
-    margin: 0 0 0.5rem 0;
-}
-
-.empty-submessage {
-    font-size: 1rem;
-    color: #9ca3af;
-    margin: 0;
-}
-
-/* Responsive design for tablets */
-@media (max-width: 1024px) {
-    .donut-charts-row {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-    }
-    
-    .donut-chart {
-        width: 180px;
-        height: 180px;
-    }
-    
-    .donut-value {
-        font-size: 2rem;
-    }
-}
-
-/* Responsive design for mobile devices */
-@media (max-width: 768px) {
-    .statistics-container {
-        padding: 1rem;
-    }
-    
-    .page-title {
-        font-size: 1.5rem;
-    }
-    
-    .page-subtitle {
-        font-size: 0.875rem;
-    }
-    
-    .donut-charts-row {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    
-    .donut-chart-card {
-        padding: 1.5rem;
-    }
-    
-    .donut-chart {
-        width: 160px;
-        height: 160px;
-    }
-    
-    .donut-value {
-        font-size: 1.875rem;
-    }
-    
-    .chart-title {
-        font-size: 1.125rem;
-    }
-    
-    .stat-item {
-        padding: 0.5rem;
-    }
-    
-    .stat-label {
-        font-size: 0.813rem;
-    }
-    
-    .stat-value {
-        font-size: 0.875rem;
-        padding: 0.25rem 0.5rem;
-    }
-}
-
-/* Reduce motion for users who prefer it */
-@media (prefers-reduced-motion: reduce) {
-    .donut-chart-card {
-        transition: none;
-    }
-}
-
-/* Print styles */
-@media print {
-    .donut-chart-card {
-        page-break-inside: avoid;
-        box-shadow: none;
-        border: 1px solid #e5e7eb;
-    }
-    
-    .donut-charts-row {
-        gap: 1rem;
-    }
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
 }
