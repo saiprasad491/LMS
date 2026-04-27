@@ -1,71 +1,161 @@
 <template>
-    <div class="all-leaves-container">
-        <div class="page-header">
-            <h2 class="page-title">My Leave Requests</h2>
-            <p class="page-subtitle">View all your leave requests and their current status</p>
+    <lightning-card title="My Leave Requests" icon-name="standard:timesheet">
+        <div slot="actions">
+            <lightning-button 
+                label="Refresh" 
+                icon-name="utility:refresh" 
+                onclick={handleRefresh}
+                variant="neutral">
+            </lightning-button>
         </div>
-        
-        <template if:true={hasLeaves}>
-            <div class="table-container">
-                <table class="leaves-table">
-                    <thead>
-                        <tr>
-                            <th>Request ID</th>
-                            <th>Leave Type</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Days</th>
-                            <th>Status</th>
-                            <th>Reason</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template for:each={leaves} for:item="leave">
-                            <tr key={leave.Id} class={leave.rowClass}>
-                                <td>
-                                    <span class="request-id">{leave.Name}</span>
-                                </td>
-                                <td>
-                                    <span class="leave-type-badge">{leave.Leave_Type__c}</span>
-                                </td>
-                                <td>{leave.Start_Date__c}</td>
-                                <td>{leave.End_Date__c}</td>
-                                <td class="text-center">
-                                    <span class="days-count">{leave.Number_of_Days__c}</span>
-                                </td>
-                                <td>
-                                    <span class={leave.statusBadgeClass}>{leave.Status__c}</span>
-                                </td>
-                                <td class="reason-cell">
-                                    <span class="reason-text">{leave.Reason__c}</span>
-                                </td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </div>
-        </template>
-        
-        <template if:false={hasLeaves}>
-            <template if:false={error}>
-                <div class="empty-state">
-                    <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor" opacity="0.3">
-                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/>
-                    </svg>
-                    <p class="empty-message">No leave requests found</p>
-                    <p class="empty-submessage">Start by applying for a leave request</p>
+
+        <div class="slds-p-around_medium">
+            <template if:true={isLoading}>
+                <div class="slds-text-align_center slds-p-around_large">
+                    <lightning-spinner 
+                        alternative-text="Loading" 
+                        size="medium">
+                    </lightning-spinner>
                 </div>
             </template>
-        </template>
-        
-        <template if:true={error}>
-            <div class="error-state">
-                <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor" opacity="0.3">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                </svg>
-                <p class="error-message">Error loading leave requests</p>
-                <p class="error-details">{error.body.message}</p>
-            </div>
-        </template>
-    </div>
+
+            <template if:false={isLoading}>
+                <template if:true={hasLeaves}>
+                    <!-- Pagination Controls Top -->
+                    <div class="pagination-container slds-m-bottom_small">
+                        <div class="records-per-page">
+                            <label class="slds-m-right_x-small">Records per page:</label>
+                            <lightning-combobox
+                                name="recordsPerPage"
+                                value={recordsPerPage}
+                                placeholder="Select..."
+                                options={pageOptions}
+                                onchange={handleRecordsPerPageChange}
+                                variant="label-hidden"
+                                dropdown-alignment="auto">
+                            </lightning-combobox>
+                        </div>
+                        
+                        <div class="pagination-info">
+                            Showing {startRecord} to {endRecord} of {totalRecords}
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-container">
+                        <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col" class="slds-text-align_left">
+                                        <div class="slds-truncate" title="Leave Type">Leave Type</div>
+                                    </th>
+                                    <th scope="col" class="slds-text-align_left">
+                                        <div class="slds-truncate" title="Start Date">Start Date</div>
+                                    </th>
+                                    <th scope="col" class="slds-text-align_left">
+                                        <div class="slds-truncate" title="End Date">End Date</div>
+                                    </th>
+                                    <th scope="col" class="slds-text-align_left">
+                                        <div class="slds-truncate" title="Manager Comment">Manager Comment</div>
+                                    </th>
+                                    <th scope="col" class="slds-text-align_left">
+                                        <div class="slds-truncate" title="Reason">Reason</div>
+                                    </th>
+                                    <th scope="col" class="slds-text-align_center">
+                                        <div class="slds-truncate" title="Status">Status</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={displayedLeaves} for:item="leave">
+                                    <tr key={leave.Id} class="slds-hint-parent">
+                                        <td data-label="Leave Type">
+                                            <div class="slds-truncate">{leave.Leave_Type__c}</div>
+                                        </td>
+                                        <td data-label="Start Date">
+                                            <div class="slds-truncate">{leave.formattedStartDate}</div>
+                                        </td>
+                                        <td data-label="End Date">
+                                            <div class="slds-truncate">{leave.formattedEndDate}</div>
+                                        </td>
+                                        <td data-label="Manager Comment" class="slds-text-align_center">
+                                            <div class="slds-truncate" title={leave.Manager_Comment__c}>{leave.Manager_Comment__c}</div>
+                                        </td>
+                                        <td data-label="Reason">
+                                            <div class="slds-truncate" title={leave.Reason__c}>{leave.Reason__c}</div>
+                                        </td>
+                                        <td data-label="Status" class="slds-text-align_center">
+                                            <span class={leave.statusClass}>{leave.Status__c}</span>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination Controls Bottom -->
+                    <div class="pagination-container slds-m-top_small">
+                        <div class="pagination-buttons">
+                            <lightning-button
+                                label="First"
+                                icon-name="utility:chevronleft"
+                                onclick={handleFirst}
+                                disabled={isPreviousDisabled}
+                                variant="neutral">
+                            </lightning-button>
+                            <lightning-button
+                                label="Previous"
+                                icon-name="utility:chevronleft"
+                                onclick={handlePrevious}
+                                disabled={isPreviousDisabled}
+                                variant="neutral"
+                                class="slds-m-left_x-small">
+                            </lightning-button>
+                            <span class="page-info">Page {currentPage} of {totalPages}</span>
+                            <lightning-button
+                                label="Next"
+                                icon-name="utility:chevronright"
+                                icon-position="right"
+                                onclick={handleNext}
+                                disabled={isNextDisabled}
+                                variant="neutral"
+                                class="slds-m-right_x-small">
+                            </lightning-button>
+                            <lightning-button
+                                label="Last"
+                                icon-name="utility:chevronright"
+                                icon-position="right"
+                                onclick={handleLast}
+                                disabled={isNextDisabled}
+                                variant="neutral">
+                            </lightning-button>
+                        </div>
+                    </div>
+                </template>
+
+                <template if:false={hasLeaves}>
+                    <div class="slds-text-align_center slds-p-around_large">
+                        <lightning-icon 
+                            icon-name="custom:custom19" 
+                            size="large" 
+                            alternative-text="No leaves">
+                        </lightning-icon>
+                        <p class="slds-m-top_medium slds-text-heading_small">No leave requests found</p>
+                        <p class="slds-m-top_small slds-text-color_weak">Submit a leave request to see it here.</p>
+                    </div>
+                </template>
+
+                <template if:true={error}>
+                    <div class="slds-text-align_center slds-p-around_large">
+                        <lightning-icon 
+                            icon-name="utility:error" 
+                            size="large" 
+                            alternative-text="Error">
+                        </lightning-icon>
+                        <p class="slds-m-top_medium slds-text-color_error">Error loading leave requests</p>
+                    </div>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
 </template>

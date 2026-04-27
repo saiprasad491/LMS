@@ -98,7 +98,7 @@
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                   </svg>
                 </div>
-                <span class="user-name">{currentUser}</span>
+                <span class="user-name">{currentUser.Name}</span>
                 <button class="logout-btn" onclick={handleLogout} title="Logout">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
@@ -119,24 +119,24 @@
             </div>
           </template>
 
-          <!-- Leave Request -->
+           <!-- Leave Request -->
            <template if:true={showLeaveRequest}>
-            <c-leave-request></c-leave-request>
+            <c-leave-request user-id={currentUserId}></c-leave-request>
            </template>
 
           <!-- All Users View -->
           <template if:true={showAllUsers}>
-            <c-all-users users-data={allUserDetails} ></c-all-users>
+            <c-all-users user-id={currentUserId} users-data={allUserDetails}></c-all-users>
           </template>
 
           <!-- All Leaves View -->
           <template if:true={showAllLeaves}>
-            <c-all-leaves leaves-data={allUserLeaves}></c-all-leaves>
+            <c-all-leaves user-id={currentUserId} leaves-data={allUserLeaves}></c-all-leaves>
           </template>
 
           <!-- Statistics View -->
           <template if:true={showStatistics}>
-            <c-statistics leaves-data={allUserLeaves}></c-statistics>
+            <c-statistics user-id={currentUserId} leaves-data={allUserLeaves}></c-statistics>
           </template>
         </main>
       </div>

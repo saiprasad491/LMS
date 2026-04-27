@@ -6,13 +6,25 @@ export default class MainLayout extends LightningElement {
   @track isAuthenticated = false;
   @track showRegister = false;
   @track currentUser = '';
+  @track currentUserId = null;
   @track sidebarCollapsed = false;
   @track currentView = 'dashboard';
   @track allUserDetails = [];
   @track allUserLeaves = [];
 
   handleLoginSuccess(event) {
-    this.currentUser = event.detail.username;
+    // Expect the login component to provide the custom user's Id and username in the event detail.
+    // Parent/login component should emit: { userId: '005...', username: 'John Doe' }
+    // Ensure currentUser is an object with a Name property so the template can use {currentUser.Name}
+    const userId = event?.detail?.userId;
+    const username = event?.detail?.username || '';
+    // If a userId is present, keep the Id and Name; otherwise use the provided username string.
+    this.currentUser = {
+      Id: userId || null,
+      Name: username
+    };
+    // expose the Id separately for child components that expect a plain Id
+    this.currentUserId = userId || null;
     this.isAuthenticated = true;
     this.showRegister = false;
     this.currentView = 'dashboard';
