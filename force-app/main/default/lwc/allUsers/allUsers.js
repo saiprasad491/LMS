@@ -9,44 +9,44 @@ export default class AllUsers extends LightningElement {
   @track pageSize = DEFAULT_PAGE_SIZE;
   @track currentPage = 1;
 
-  users = [
-    {
-      Id: '1',
-      Name: 'John Doe',
-      Email__c: 'john.doe@example.com',
-      Role__c: 'Administrator'
-    },
-    {
-      Id: '2',
-      Name: 'Jane Smith',
-      Email__c: 'jane.smith@example.com',
-      Role__c: 'Manager'
-    },
-    {
-      Id: '3',
-      Name: 'Mike Johnson',
-      Email__c: 'mike.johnson@example.com',
-      Role__c: 'Employee'
-    },
-    {
-      Id: '4',
-      Name: 'Sarah Williams',
-      Email__c: 'sarah.williams@example.com',
-      Role__c: 'Employee'
-    },
-    {
-      Id: '5',
-      Name: 'Tom Brown',
-      Email__c: 'tom.brown@example.com',
-      Role__c: 'Manager'
-    },
-    {
-      Id: '6',
-      Name: 'Emily Davis',
-      Email__c: 'emily.davis@example.com',
-      Role__c: 'Employee'
-    }
-  ];
+  // users = [
+  //   {
+  //     Id: '1',
+  //     Name: 'John Doe',
+  //     Email__c: 'john.doe@example.com',
+  //     Role__c: 'Administrator'
+  //   },
+  //   {
+  //     Id: '2',
+  //     Name: 'Jane Smith',
+  //     Email__c: 'jane.smith@example.com',
+  //     Role__c: 'Manager'
+  //   },
+  //   {
+  //     Id: '3',
+  //     Name: 'Mike Johnson',
+  //     Email__c: 'mike.johnson@example.com',
+  //     Role__c: 'Employee'
+  //   },
+  //   {
+  //     Id: '4',
+  //     Name: 'Sarah Williams',
+  //     Email__c: 'sarah.williams@example.com',
+  //     Role__c: 'Employee'
+  //   },
+  //   {
+  //     Id: '5',
+  //     Name: 'Tom Brown',
+  //     Email__c: 'tom.brown@example.com',
+  //     Role__c: 'Manager'
+  //   },
+  //   {
+  //     Id: '6',
+  //     Name: 'Emily Davis',
+  //     Email__c: 'emily.davis@example.com',
+  //     Role__c: 'Employee'
+  //   }
+  // ];
 
   get pageSizeOptions() {
     return [
@@ -58,7 +58,7 @@ export default class AllUsers extends LightningElement {
   }
 
   get sourceUsers() {
-    return this.usersData && this.usersData.length > 0 ? this.usersData : this.users;
+    return this.usersData && this.usersData.length > 0 ? this.usersData : [];
   }
 
   get alphabetButtons() {

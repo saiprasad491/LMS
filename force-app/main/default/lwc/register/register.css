@@ -228,3 +228,11 @@
     gap: 18px;
   }
 }
+
+/* Error message styling */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}

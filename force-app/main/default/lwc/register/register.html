@@ -24,13 +24,36 @@
             <input
               type="text"
               id="username"
+              name="username"
               class="form-input"
               placeholder="Enter your username"
               value={username}
-              onchange={handleUsernameChange}
+              onchange={handleChange}
               required
             />
           </div>
+          <div if:true={errorMessages.username} class="error-message">{errorMessages.username}</div>
+        </div>
+
+        <!-- Role Picklist -->
+        <div class="form-group">
+          <label class="form-label" for="role">Role</label>
+          <div class="input-wrapper">
+            <select
+              id="role"
+              name="role"
+              class="form-input"
+              value={role}
+              onchange={handleChange}
+              required
+            >
+              <option value="">Select Role</option>
+              <option value="Employee">Employee</option>
+              <option value="Intern">Intern</option>
+              <option value="Manager">Manager</option>
+            </select>
+          </div>
+          <div if:true={errorMessages.role} class="error-message">{errorMessages.role}</div>
         </div>
 
         <!-- Email Field -->
@@ -43,13 +66,15 @@
             <input
               type="email"
               id="email"
+              name="email"
               class="form-input"
               placeholder="Enter your email"
               value={email}
-              onchange={handleEmailChange}
+              onchange={handleChange}
               required
             />
           </div>
+          <div if:true={errorMessages.email} class="error-message">{errorMessages.email}</div>
         </div>
 
         <!-- Password Field -->
@@ -62,10 +87,12 @@
             <input
               type={passwordType}
               id="password"
+              name="password"
               class="form-input with-suffix"
               placeholder="Create a password"
               value={password}
-              onchange={handlePasswordChange}
+              onchange={handleChange}
+              maxlength="6"
               required
             />
             <button type="button" class="input-suffix" onclick={togglePasswordVisibility}>
@@ -77,6 +104,7 @@
               </svg>
             </button>
           </div>
+          <div if:true={errorMessages.password} class="error-message">{errorMessages.password}</div>
         </div>
 
         <!-- Confirm Password Field -->
@@ -89,10 +117,12 @@
             <input
               type={confirmPasswordType}
               id="confirmPassword"
-              class="form-input with-suffix"
+              name="confirmPassword"
+              class="form-input"
               placeholder="Confirm your password"
               value={confirmPassword}
-              onchange={handleConfirmPasswordChange}
+              onchange={handleChange}
+              maxlength="6"
               required
             />
             <button type="button" class="input-suffix" onclick={toggleConfirmPasswordVisibility}>
@@ -104,6 +134,7 @@
               </svg>
             </button>
           </div>
+          <div if:true={errorMessages.confirmPassword} class="error-message">{errorMessages.confirmPassword}</div>
         </div>
 
         <!-- Submit Button -->

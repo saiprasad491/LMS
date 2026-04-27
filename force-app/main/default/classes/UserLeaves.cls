@@ -1,41 +1,29 @@
 public with sharing class UserLeaves {
     
     @AuraEnabled(cacheable=true)
-    public static List<LeaveWrapper> getUserLeaves() {
-        List<LeaveWrapper> leavesList = new List<LeaveWrapper>();
-        Integer serialNo = 1;
-        
+    public static List<User_Leaves__c> getUserLeaves() {        
         try {
-            // Query all users with their leave information
-            // Assuming you have a Leave__c custom object with fields:
-            // Employee__c (lookup to User), Leave_Type__c, 
-            // Total_Allocated_Leaves__c, Total_Consumed_Leaves__c
-            
-            for (User u : [SELECT Id, Name FROM User WHERE IsActive = true LIMIT 100]) {
-                LeaveWrapper wrapper = new LeaveWrapper();
-                wrapper.serialNo = serialNo++;
-                wrapper.employeeName = u.Name;
-                wrapper.leaveType = 'Annual'; // Default, can be queried from Leave__c object
-                wrapper.allocatedLeaves = 20; // Default, can be queried from Leave__c object
-                wrapper.consumedLeaves = 0; // Default, can be queried from Leave__c object
-                wrapper.remainingLeaves = 20; // Default, can be queried from Leave__c object
+            return [SELECT Name, Custom_User__r.Name, Leave_Type__c, Total_Allocated__c, Total_Consumed__c, Remaining_Leaves__c FROM User_Leaves__c];
                 
-                leavesList.add(wrapper);
-            }
         } catch (Exception e) {
             System.debug('Error fetching user leaves: ' + e.getMessage());
+            return new List<User_Leaves__c>();
         }
-        
-        return leavesList;
     }
     
-    // Wrapper class to hold leave information
-    public class LeaveWrapper {
-        @AuraEnabled public Integer serialNo;
-        @AuraEnabled public String employeeName;
-        @AuraEnabled public String leaveType;
-        @AuraEnabled public Integer allocatedLeaves;
-        @AuraEnabled public Integer consumedLeaves;
-        @AuraEnabled public Integer remainingLeaves;
+    @AuraEnabled(cacheable=true)
+    public static List<Leave_Request__c> getCurrentUserLeaveRequests(String userId) {        
+        try {
+            return [
+                SELECT Id, Name, Leave_Type__c, From_Date__c, To_Date__c, 
+                       Number_of_Days__c, Reason__c, Status__c, CreatedDate
+                FROM Leave_Request__c 
+                WHERE Custom_User__c = :userId
+                ORDER BY CreatedDate DESC
+            ];
+        } catch (Exception e) {
+            System.debug('Error fetching user leave requests: ' + e.getMessage());
+            throw new AuraHandledException('Error fetching leave requests: ' + e.getMessage());
+        }
     }
 }
