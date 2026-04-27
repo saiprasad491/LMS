@@ -1,0 +1,48 @@
+.approvals-root {
+  padding: 1rem;
+}
+
+.approvals-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.approvals-table th,
+.approvals-table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.approvals-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+.btn {
+  padding: 6px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.btn.approve {
+  background: #10b981;
+  color: #fff;
+}
+
+.btn.reject {
+  background: #ef4444;
+  color: #fff;
+}
+
+.loading {
+  color: #6b7280;
+}
+
+.empty {
+  text-align: center;
+  color: #6b7280;
+}

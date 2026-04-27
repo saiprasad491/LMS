@@ -1,0 +1,100 @@
+<template>
+  <div class="approvals-root">
+    <h3>Pending Leave Requests</h3>
+
+    <template if:true={loading}>
+      <div class="loading">Loading...</div>
+    </template>
+
+    <template if:false={loading}>
+      <!-- controls: page size and record counts -->
+      <div class="controls">
+        <div class="page-size">
+          <label for="pageSizeSelect">Records per page:</label>
+          <select id="pageSizeSelect" onchange={handlePageSizeChange}>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+
+        <div class="record-count">
+          <template if:true={totalRecords}>
+            Showing
+            <span class="range">
+              {displayStart}
+              -
+              {displayEnd}
+            </span>
+            of <strong>{totalRecords}</strong> records
+          </template>
+          <template if:false={totalRecords}>
+            No records
+          </template>
+        </div>
+      </div>
+
+      <table class="approvals-table" role="table">
+        <thead>
+          <tr>
+            <th>Requester</th>
+            <th>Leave Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Days</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template for:each={currentPageLeaves} for:item="row">
+            <tr key={row.id}>
+              <td>{row.requesterName}</td>
+              <td>{row.leaveType}</td>
+              <td>{row.startDate}</td>
+              <td>{row.endDate}</td>
+              <td>{row.days}</td>
+              <td>{row.status}</td>
+              <td>
+                <template if:true={row.isPending}>
+                  <button data-id={row.id} class="btn approve" onclick={handleApprove}>Approve</button>
+                  <button data-id={row.id} class="btn reject" onclick={handleReject}>Reject</button>
+                </template>
+                <template if:false={row.isPending}>
+                  <span class="no-actions">{row.formattedStatus}</span>
+                </template>
+              </td>
+            </tr>
+          </template>
+          <template if:true={hasNoLeaves}>
+            <tr role="row">
+              <td colspan={columnCount} class="empty" role="cell">
+                <div role="status" aria-live="polite" class="empty-message">No leave requests found.</div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+
+      <!-- pagination controls -->
+      <template if:true={showPagination}>
+    <div class="pagination">
+        <button class="btn prev" onclick={prevPage} disabled={isPrevDisabled}>Prev</button>
+
+        <template for:each={pageNumbers} for:item="p">
+            <button
+                key={p}
+                class={getPageClass}
+                onclick={handlePageButtonClick}
+                data-page={p}>
+                {p}
+            </button>
+        </template>
+
+        <button class="btn next" onclick={nextPage} disabled={isNextDisabled}>Next</button>
+    </div>
+</template>
+    </template>
+  </div>
+</template>

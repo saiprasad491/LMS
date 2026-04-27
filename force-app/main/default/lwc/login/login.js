@@ -45,6 +45,7 @@ export default class Login extends LightningElement {
         if (result && result.length > 0) {
           // Authentication successful
           const user = result[0];
+          console.log(`login userId ${user.Id} userName ${user.Name} role ${user.Role__c} email ${user.Email__c}`);
           const loginSuccessEvent = new CustomEvent('loginsuccess', {
             detail: { 
               username: user.Name, 

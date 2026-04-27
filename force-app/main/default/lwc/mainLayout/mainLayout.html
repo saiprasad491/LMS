@@ -115,7 +115,19 @@
           <template if:true={showDashboard}>
             <div class="dashboard-content">
               <h2>Welcome to Dashboard</h2>
-              <p>This is the dashboard view. Dashboard content will be displayed here.</p>
+              <!-- If the current user is a Manager or HR (isApprover), show all leaves with approve capability -->
+              <template if:true={isApprover}>
+                <!-- <c-all-leaves user-id={currentUserId} leaves-data={allUserLeaves} show-approver-actions></c-all-leaves> -->
+                <!-- Show approvals component only to approvers -->
+                <c-approvals></c-approvals>
+              </template>
+              <template if:false={isApprover} >
+                <p> Only Approver Can Access </p>
+              </template>
+              <!-- For regular users show their personal dashboard components -->
+              <!-- <template if:false={isApprover}>
+                <c-statistics user-id={currentUserId} leaves-data={allUserLeaves}></c-statistics>
+              </template> -->
             </div>
           </template>
 

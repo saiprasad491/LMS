@@ -8,6 +8,7 @@ export default class MainLayout extends LightningElement {
   @track showRegister = false;
   @track currentUser = '';
   @track currentUserId = null;
+  @track currentUserRole = '';
   @track sidebarCollapsed = false;
   @track currentView = 'dashboard';
   @track allUserDetails = [];
@@ -19,6 +20,8 @@ export default class MainLayout extends LightningElement {
     // Ensure currentUser is an object with a Name property so the template can use {currentUser.Name}
     const userId = event?.detail?.userId;
     const username = event?.detail?.username || '';
+    const role = event?.detail?.role;
+    console.log(`userId ${userId} userName ${username} role ${role}`);
     // If a userId is present, keep the Id and Name; otherwise use the provided username string.
     this.currentUser = {
       Id: userId || null,
@@ -26,9 +29,16 @@ export default class MainLayout extends LightningElement {
     };
     // expose the Id separately for child components that expect a plain Id
     this.currentUserId = userId || null;
+    // store role for role-based UI
+    this.currentUserRole = role || '';
     this.isAuthenticated = true;
     this.showRegister = false;
-    this.currentView = 'dashboard';
+    // If user is a Manager or HR, show all leaves/users dashboard by default
+    if (['Manager', 'HR'].includes(this.currentUserRole)) {
+      this.currentView = 'allLeaves';
+    } else {
+      this.currentView = 'dashboard';
+    }
     // Fetch leaves for the logged-in user so child components (statistics etc.) get per-user data
     this.fetchLeavesForUser(this.currentUserId);
   }
@@ -96,6 +106,11 @@ export default class MainLayout extends LightningElement {
   get showStatistics() {
     return this.currentView === 'statistics';
   }
+
+  get isApprover(){
+    return ['Manager', 'HR'].includes(this.currentUserRole);
+  }
+
 
   @wire(getUsers)
     wiredUsers({ data, error }) {
