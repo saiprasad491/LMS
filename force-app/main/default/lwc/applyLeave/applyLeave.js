@@ -1,4 +1,6 @@
 import { LightningElement, track } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import createLeaveRequest from '@salesforce/apex/UserLeaveRequests.createLeaveRequest';
 
 export default class ApplyLeave extends LightningElement {
   @track showApplyLeaveModal = false;
@@ -43,27 +45,118 @@ export default class ApplyLeave extends LightningElement {
       leaveType: '',
       reason: ''
     };
+    // Notify parent that the form was cancelled (optional)
+    this.dispatchEvent(new CustomEvent('leavecancelled'));
   }
 
   // Handle apply button click
   handleApply() {
-    console.log('Leave Request Details:');
-    console.log('From Date:', this.formData.fromDate);
-    console.log('To Date:', this.formData.toDate);
-    console.log('Leave Type:', this.formData.leaveType);
-    console.log('Reason:', this.formData.reason);
-    console.log('Complete Form Data:', JSON.stringify(this.formData, null, 2));
-    
-    // Close modal after applying
-    this.showApplyLeaveModal = false;
-    
-    // Reset form data
-    this.formData = {
-      fromDate: '',
-      toDate: '',
-      leaveType: '',
-      reason: ''
+    // Basic validation: require From Date, To Date, and Leave Type
+    if (!this.formData.fromDate || !this.formData.toDate || !this.formData.leaveType) {
+      this.dispatchEvent(
+        new ShowToastEvent({
+          title: 'Missing required fields',
+          message: 'Please provide From Date, To Date and Leave Type.',
+          variant: 'error'
+        })
+      );
+      return;
+    }
+    // Ensure from <= to
+    const fromDt = new Date(this.formData.fromDate);
+    const toDt = new Date(this.formData.toDate);
+    if (isNaN(fromDt.getTime()) || isNaN(toDt.getTime()) || fromDt > toDt) {
+      this.dispatchEvent(
+        new ShowToastEvent({
+          title: 'Invalid dates',
+          message: 'Please ensure From Date is on or before To Date.',
+          variant: 'error'
+        })
+      );
+      return;
+    }
+
+    const fromDateStr = this.formData.fromDate;
+    const toDateStr = this.formData.toDate;
+
+    // Calculate number of days (inclusive)
+    let numberOfDays = null;
+    try {
+      const fromDt = new Date(fromDateStr);
+      const toDt = new Date(toDateStr);
+      const oneDay = 24 * 60 * 60 * 1000;
+      const diffDays = Math.round((toDt - fromDt) / oneDay) + 1;
+      if (!isNaN(diffDays) && diffDays > 0) {
+        numberOfDays = diffDays;
+      }
+    } catch (e) {
+      console.warn('Could not calculate number of days automatically:', e);
+    }
+
+    // Prepare params for Apex
+    const params = {
+      fromDate: fromDateStr,
+      toDate: toDateStr,
+      leaveType: this.formData.leaveType || '',
+      numberOfDays: numberOfDays,
+      reason: this.formData.reason || ''
     };
+
+    // Call Apex to create the leave request
+    createLeaveRequest(params)
+      .then((res) => {
+        // Apex returns a Map<String,Object> — handle accordingly
+        // res may be returned as a JS object
+        const success = res && (res.success === true || res.success === 'true');
+        const message = res && res.message ? res.message : 'No message returned';
+        const id = res && res.id ? res.id : null;
+        if (success) {
+          // Show success toast
+          this.dispatchEvent(
+            new ShowToastEvent({
+              title: 'Leave Requested',
+              message: message || 'Your leave request has been submitted.',
+              variant: 'success'
+            })
+          );
+          // Notify parent components to refresh lists
+          this.dispatchEvent(new CustomEvent('leavesubmitted', { detail: { id } }));
+        } else {
+          // Show error toast
+          this.dispatchEvent(
+            new ShowToastEvent({
+              title: 'Failed to create leave request',
+              message: message || 'Please try again or contact your administrator.',
+              variant: 'error'
+            })
+          );
+          console.error('Failed to create leave request:', message);
+        }
+      })
+      .catch((error) => {
+        // Show toast for Apex error
+        const errMsg = (error && error.body && error.body.message) ? error.body.message : JSON.stringify(error);
+        this.dispatchEvent(
+          new ShowToastEvent({
+            title: 'Server error',
+            message: errMsg,
+            variant: 'error'
+          })
+        );
+        console.error('Apex error creating leave request:', error);
+      })
+      .finally(() => {
+        // Close modal after attempting to apply
+        this.showApplyLeaveModal = false;
+
+        // Reset form data
+        this.formData = {
+          fromDate: '',
+          toDate: '',
+          leaveType: '',
+          reason: ''
+        };
+      });
   }
 
 }

@@ -3,9 +3,9 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import USER_ID from '@salesforce/user/Id';
 
 const LEAVE_TYPE_OPTIONS = [
-    { label: 'Annual', value: 'annual' },
-    { label: 'Sick', value: 'sick' },
-    { label: 'Work From Home', value: 'wfh' },
+    { label: 'Planned Leave', value: 'Planned Leave' },
+    { label: 'Sick Leave', value: 'Sick Leave' },
+    { label: 'Unpaid Leave', value: 'Unpaid Leave' },
 ];
 
 export default class LeaveRequest extends LightningElement {

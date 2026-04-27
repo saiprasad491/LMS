@@ -13,6 +13,7 @@ export default class MainLayout extends LightningElement {
   @track currentView = 'dashboard';
   @track allUserDetails = [];
   @track allUserLeaves = [];
+  @track userInitialized = false;
 
   handleLoginSuccess(event) {
     // Expect the login component to provide the custom user's Id and username in the event detail.
@@ -145,9 +146,13 @@ export default class MainLayout extends LightningElement {
       // Reassign a new array reference so child components' @api setters run when navigating
       this.allUserLeaves = data ? [...data] : [];
       console.log('Fetched leaves for user:', userId, this.allUserLeaves);
+      // mark initialization complete so child components can safely render
+      this.userInitialized = true;
     } catch (error) {
       console.error('Error fetching leaves for user:', error);
       this.allUserLeaves = [];
+      // still mark initialized to avoid blocking UI indefinitely
+      this.userInitialized = true;
     }
   }
 

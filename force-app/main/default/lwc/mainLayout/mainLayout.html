@@ -113,22 +113,30 @@
         <main class="page-content">
           <!-- Dashboard View -->
           <template if:true={showDashboard}>
-            <div class="dashboard-content">
-              <h2>Welcome to Dashboard</h2>
-              <!-- If the current user is a Manager or HR (isApprover), show all leaves with approve capability -->
-              <template if:true={isApprover}>
-                <!-- <c-all-leaves user-id={currentUserId} leaves-data={allUserLeaves} show-approver-actions></c-all-leaves> -->
-                <!-- Show approvals component only to approvers -->
-                <c-approvals></c-approvals>
-              </template>
-              <template if:false={isApprover} >
-                <p> Only Approver Can Access </p>
-              </template>
-              <!-- For regular users show their personal dashboard components -->
-              <!-- <template if:false={isApprover}>
-                <c-statistics user-id={currentUserId} leaves-data={allUserLeaves}></c-statistics>
-              </template> -->
-            </div>
+            <!-- Only render dashboard children after user initialization to avoid transient/misaligned renders -->
+            <template if:true={userInitialized}>
+              <div class="dashboard-content">
+                <h2>Welcome to Dashboard</h2>
+                <!-- If the current user is a Manager or HR (isApprover), show all leaves with approve capability -->
+                <template if:true={isApprover}>
+                  <!-- <c-all-leaves user-id={currentUserId} leaves-data={allUserLeaves} show-approver-actions></c-all-leaves> -->
+                  <!-- Show approvals component only to approvers -->
+                  <c-approvals></c-approvals>
+                </template>
+                <template if:false={isApprover} >
+                  <p> Only Approver Can Access </p>
+                </template>
+                <!-- For regular users show their personal dashboard components -->
+                <!-- <template if:false={isApprover}>
+                  <c-statistics user-id={currentUserId} leaves-data={allUserLeaves}></c-statistics>
+                </template> -->
+              </div>
+            </template>
+            <template if:false={userInitialized}>
+              <div class="dashboard-loading">
+                <p>Loading dashboard...</p>
+              </div>
+            </template>
           </template>
 
            <!-- Leave Request -->
