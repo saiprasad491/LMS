@@ -8,7 +8,7 @@ export default class Approvals extends LightningElement {
   @track loading = false;
 
   // pagination state
-  @track pageSize = 10; // number of records per page (default)
+  @track pageSize = 5; // number of records per page (default)
   @track pageNumber = 1; // current page (1-based)
   @track totalRecords = 0;
   @track totalPages = 0;
