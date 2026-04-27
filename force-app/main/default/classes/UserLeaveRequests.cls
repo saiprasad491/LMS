@@ -26,17 +26,25 @@ public with sharing class UserLeaveRequests {
     // Update the status of a leave request (Approved/Rejected)
     @AuraEnabled
     public static Boolean updateLeaveRequestStatus(Id requestId, String status){
-        if(requestId == null || String.isBlank(status)) return false;
-        Leave_Request__c lr = [SELECT Id, Status__c FROM Leave_Request__c WHERE Id = :requestId LIMIT 1];
-        lr.Status__c = status;
-        update lr;
-        return true;
+        try {
+            if(requestId == null || String.isBlank(status)) {
+                return false;
+            }
+            Leave_Request__c lr = [SELECT Id, Status__c FROM Leave_Request__c WHERE Id = :requestId LIMIT 1];
+            lr.Status__c = status;
+            update lr;
+            return true;
+        } catch (Exception e) {
+            System.debug('Error updating leave request status: ' + e.getMessage());
+            throw new AuraHandledException('Error updating leave request: ' + e.getMessage());
+        }
     }
 
     //apply for leave
     /**
-     * Creates a Leave_Request__c for the current logged in user.
+     * Creates a Leave_Request__c for the specified custom user.
      *
+     * @param customUserId The ID of the Custom_User__c record
      * @param fromDate Date string in yyyy-MM-dd format or Date instance (Sent from LWC as string)
      * @param toDate Date string in yyyy-MM-dd format or Date instance (Sent from LWC as string)
      * @param leaveType API name of leave type (Leave_Type__c)
@@ -45,14 +53,17 @@ public with sharing class UserLeaveRequests {
      * @return Map<String, Object> containing success (Boolean), id (Id when success), message (String)
      */
     @AuraEnabled
-    public static Map<String, Object> createLeaveRequest(String fromDate, String toDate, String leaveType, Decimal numberOfDays, String reason) {
+    public static Map<String, Object> createLeaveRequest(Id customUserId, String fromDate, String toDate, String leaveType, Decimal numberOfDays, String reason) {
         Map<String, Object> result = new Map<String, Object>{
             'success' => false,
             'id' => null,
             'message' => ''
         };
         try {
-            Id currentUserId = UserInfo.getUserId();
+            if (customUserId == null) {
+                result.put('message', 'Custom user ID is required.');
+                return result;
+            }
             Date fromDt;
             Date toDt;
             // Parse dates safely
@@ -68,11 +79,10 @@ public with sharing class UserLeaveRequests {
                 return result;
             }
             Leave_Request__c lr = new Leave_Request__c();
-            lr.Custom_User__c = currentUserId;
+            lr.Custom_User__c = customUserId;
             lr.From_Date__c = fromDt;
             lr.To_Date__c = toDt;
             if (!String.isBlank(leaveType)) lr.Leave_Type__c = leaveType;
-            // if (numberOfDays != null) lr.Number_of_days__c = numberOfDays;
             if (!String.isBlank(reason)) lr.Reason__c = reason;
             lr.Status__c = 'Pending';
             insert lr;

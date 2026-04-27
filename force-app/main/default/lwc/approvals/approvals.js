@@ -1,4 +1,5 @@
 import { LightningElement, track } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getAllLeaveRequests from '@salesforce/apex/UserLeaveRequests.getAllLeaveRequests';
 import updateLeaveRequestStatus from '@salesforce/apex/UserLeaveRequests.updateLeaveRequestStatus';
 
@@ -92,7 +93,8 @@ export default class Approvals extends LightningElement {
         endDate: r.To_Date__c,
         days: r.Number_of_days__c,
         status: r.Status__c,
-        isPending: (r.Status__c === 'Pending')
+        isPending: (r.Status__c === 'Pending'),
+        formattedStatus: this.formatStatus(r.Status__c)
       }));
 
       // pagination calculations
@@ -145,29 +147,59 @@ export default class Approvals extends LightningElement {
     this.pageNumber = 1;
   }
 
+  // Format status for display
+  formatStatus(status) {
+    if (!status) return 'Pending';
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  }
+
   // Approve a request
   async handleApprove(event) {
     const id = event.currentTarget.dataset.id;
-    await this.updateStatus(id, 'Approved');
+    await this.updateStatus(id, 'Approve');
   }
 
   // Reject a request
   async handleReject(event) {
     const id = event.currentTarget.dataset.id;
-    await this.updateStatus(id, 'Rejected');
+    await this.updateStatus(id, 'Reject');
   }
 
   async updateStatus(id, status) {
     this.loading = true;
     try {
-      await updateLeaveRequestStatus({ requestId: id, status });
-      // refresh local list
-      await this.loadLeaves();
+      const result = await updateLeaveRequestStatus({ requestId: id, status });
+      if (result) {
+        this.showToast('Success', `Leave request has been ${status.toLowerCase()}.`, 'success');
+        // refresh local list
+        await this.loadLeaves();
+      } else {
+        this.showToast('Error', 'Failed to update leave request status.', 'error');
+      }
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error updating status', err);
+      let errorMessage = 'An error occurred while updating the status.';
+      if (err.body && err.body.message) {
+        errorMessage = err.body.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      }
+      this.showToast('Error', errorMessage, 'error');
     } finally {
       this.loading = false;
     }
+  }
+
+  showToast(title, message, variant) {
+    this.dispatchEvent(
+      new ShowToastEvent({
+        title,
+        message,
+        variant
+      })
+    );
   }
 }

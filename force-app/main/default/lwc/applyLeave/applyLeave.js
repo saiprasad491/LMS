@@ -33,6 +33,9 @@ export default class ApplyLeave extends LightningElement {
     const field = event.target.name;
     const value = event.target.value;
     this.formData[field] = value;
+    // Debug logging to help trace issues during local testing
+    // eslint-disable-next-line no-console
+    console.debug(`applyLeave handleChange - field: ${field}, value: ${value}`, JSON.stringify(this.formData));
   }
 
   // Handle cancel button click
@@ -51,12 +54,12 @@ export default class ApplyLeave extends LightningElement {
 
   // Handle apply button click
   handleApply() {
-    // Basic validation: require From Date, To Date, and Leave Type
-    if (!this.formData.fromDate || !this.formData.toDate || !this.formData.leaveType) {
+    // Basic validation: require From Date, To Date, Leave Type and Reason
+    if (!this.formData.fromDate || !this.formData.toDate || !this.formData.leaveType || !this.formData.reason) {
       this.dispatchEvent(
         new ShowToastEvent({
           title: 'Missing required fields',
-          message: 'Please provide From Date, To Date and Leave Type.',
+          message: 'Please provide From Date, To Date, Leave Type and Reason.',
           variant: 'error'
         })
       );
@@ -102,11 +105,43 @@ export default class ApplyLeave extends LightningElement {
       reason: this.formData.reason || ''
     };
 
+    // For local debugging: if running outside org or Apex failing, simulate success
+    const simulateIfNeeded = false; // set true to simulate without calling Apex
+    if (simulateIfNeeded) {
+      // eslint-disable-next-line no-console
+      console.info('Simulating createLeaveRequest response (local debug mode)');
+      const simulatedId = 'a0BsimulatedId000000';
+      this.dispatchEvent(
+        new ShowToastEvent({
+          title: 'Leave Requested (Simulated)',
+          message: 'Simulated leave request created.',
+          variant: 'success'
+        })
+      );
+      this.dispatchEvent(new CustomEvent('leavesubmitted', { detail: { id: simulatedId } }));
+      this.showApplyLeaveModal = false;
+      this.formData = { fromDate: '', toDate: '', leaveType: '', reason: '' };
+      return;
+    }
+
     // Call Apex to create the leave request
-    createLeaveRequest(params)
+    // Ensure keys match Apex parameter names exactly
+    const apexParams = {
+      fromDate: params.fromDate,
+      toDate: params.toDate,
+      leaveType: params.leaveType,
+      numberOfDays: params.numberOfDays,
+      reason: params.reason
+    };
+    // Debug log request
+    // eslint-disable-next-line no-console
+    console.debug('Calling createLeaveRequest with', apexParams);
+
+    createLeaveRequest(apexParams)
       .then((res) => {
-        // Apex returns a Map<String,Object> — handle accordingly
-        // res may be returned as a JS object
+        // Debug log response
+        // eslint-disable-next-line no-console
+        console.debug('createLeaveRequest response', res);
         const success = res && (res.success === true || res.success === 'true');
         const message = res && res.message ? res.message : 'No message returned';
         const id = res && res.id ? res.id : null;
@@ -130,11 +165,14 @@ export default class ApplyLeave extends LightningElement {
               variant: 'error'
             })
           );
+          // eslint-disable-next-line no-console
           console.error('Failed to create leave request:', message);
         }
       })
       .catch((error) => {
-        // Show toast for Apex error
+        // Debug log error
+        // eslint-disable-next-line no-console
+        console.error('createLeaveRequest caught error', error);
         const errMsg = (error && error.body && error.body.message) ? error.body.message : JSON.stringify(error);
         this.dispatchEvent(
           new ShowToastEvent({
@@ -143,7 +181,6 @@ export default class ApplyLeave extends LightningElement {
             variant: 'error'
           })
         );
-        console.error('Apex error creating leave request:', error);
       })
       .finally(() => {
         // Close modal after attempting to apply

@@ -1,6 +1,6 @@
-import { LightningElement } from 'lwc';
+import { LightningElement, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import USER_ID from '@salesforce/user/Id';
+import createLeaveRequest from '@salesforce/apex/UserLeaveRequests.createLeaveRequest';
 
 const LEAVE_TYPE_OPTIONS = [
     { label: 'Planned Leave', value: 'Planned Leave' },
@@ -9,7 +9,7 @@ const LEAVE_TYPE_OPTIONS = [
 ];
 
 export default class LeaveRequest extends LightningElement {
-    userId = USER_ID;
+    @api userId; // Custom user ID passed from parent component
     fromDate = '';
     toDate = '';
     leaveType = '';
@@ -23,23 +23,43 @@ export default class LeaveRequest extends LightningElement {
         }
     }
 
-    handleApply() {
-        const payload = {
-            userId: this.userId,
-            fromDate: this.fromDate,
-            toDate: this.toDate,
-            leaveType: this.leaveType,
-            reason: this.reason,
-        };
-
-        console.log('Leave request payload:', payload);
-
+    async handleApply() {
         if (!this.fromDate || !this.toDate || !this.leaveType) {
             this.showToast('Validation required', 'Please select From, To and Leave Type before applying.', 'warning');
             return;
         }
 
-        this.showToast('Applied', 'Leave request is ready and logged to console.', 'success');
+        // Calculate number of days
+        const from = new Date(this.fromDate);
+        const to = new Date(this.toDate);
+        const diffTime = Math.abs(to - from);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+        if (!this.userId) {
+            this.showToast('Error', 'User ID is not available. Please log in again.', 'error');
+            return;
+        }
+
+        try {
+            const result = await createLeaveRequest({
+                customUserId: this.userId,
+                fromDate: this.fromDate,
+                toDate: this.toDate,
+                leaveType: this.leaveType,
+                numberOfDays: diffDays,
+                reason: this.reason
+            });
+
+            if (result.success) {
+                this.showToast('Success', result.message, 'success');
+                // Reset form
+                this.handleCancel();
+            } else {
+                this.showToast('Error', result.message, 'error');
+            }
+        } catch (error) {
+            this.showToast('Error', 'An unexpected error occurred: ' + error.body.message, 'error');
+        }
     }
 
     handleCancel() {
