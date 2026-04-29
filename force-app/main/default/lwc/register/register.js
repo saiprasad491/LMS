@@ -35,7 +35,6 @@ export default class Register extends LightningElement {
   handleChange(event) {
     const field = event.target.name;
     this[field] = event.target.value;
-    // Clear error when user starts typing
     this.errorMessages = { ...this.errorMessages, [field]: '' };
   }
 
@@ -104,17 +103,14 @@ export default class Register extends LightningElement {
     // Create the user
     createUser({ username: this.username, email: this.email, password: this.password, role: this.role })
       .then(() => {
-        // Show success toast
         this.dispatchEvent(new ShowToastEvent({
           title: 'Success',
           message: 'User created successfully!',
           variant: 'success'
         }));
-        // Navigate to login
         this.handleBackToLogin();
       })
       .catch(error => {
-        // Show error toast
         this.dispatchEvent(new ShowToastEvent({
           title: 'Error',
           message: 'Error creating user: ' + error.body.message,
@@ -125,7 +121,6 @@ export default class Register extends LightningElement {
 
   handleLoginClick(event) {
     event.preventDefault();
-    // Call the back to login handler which dispatches the proper event
     this.handleBackToLogin(event);
   }
 }

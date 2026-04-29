@@ -52,7 +52,6 @@ export default class LeaveRequest extends LightningElement {
 
             if (result.success) {
                 this.showToast('Success', result.message, 'success');
-                // Reset form
                 this.handleCancel();
             } else {
                 this.showToast('Error', result.message, 'error');

@@ -23,17 +23,14 @@ export default class Approvals extends LightningElement {
     { label: 'Status', fieldName: 'status' }
   ];
 
-  // Number of columns in the approvals table; keep this in sync with the <th> count in the template
   get columnCount() {
     return 7;
   }
 
-  // Readable boolean used by the template instead of inline expressions
   get hasNoLeaves() {
     return !this.loading && Array.isArray(this.leaves) && this.leaves.length === 0;
   }
 
-  // returns the slice of leaves for the current page
   get currentPageLeaves() {
     if (!Array.isArray(this.leaves) || this.leaves.length === 0) {
       return [];
@@ -42,12 +39,10 @@ export default class Approvals extends LightningElement {
     return this.leaves.slice(start, start + this.pageSize);
   }
 
-  // helper to determine whether pagination controls should be shown
   get showPagination() {
     return this.totalRecords > this.pageSize;
   }
 
-  // computed page numbers array for template iteration
   get pageNumbers() {
     const pages = [];
     for (let i = 1; i <= this.totalPages; i++) {
@@ -56,18 +51,15 @@ export default class Approvals extends LightningElement {
     return pages;
   }
 
-  // display range start
   get displayStart() {
     if (this.totalRecords === 0) return 0;
     return (this.pageNumber - 1) * this.pageSize + 1;
   }
 
-  // display range end
   get displayEnd() {
     return Math.min(this.totalRecords, this.pageNumber * this.pageSize);
   }
 
-  // handler for page button clicks
   handlePageButtonClick(event) {
     const p = Number(event.currentTarget.dataset.page);
     if (!Number.isNaN(p)) {

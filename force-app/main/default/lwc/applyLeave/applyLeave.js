@@ -12,14 +12,12 @@ export default class ApplyLeave extends LightningElement {
     reason: ''
   };
 
-  // Leave type options for dropdown
   leaveTypeOptions = [
     { label: 'Sick Leave', value: 'Sick Leave' },
     { label: 'Planned Leave', value: 'Planned Leave' },
     { label: 'Unpaid Leave', value: 'Unpaid Leave' }
   ];
 
-  // Getter for dynamic container class
   get containerClass() {
     return this.showApplyLeaveModal ? 'modal-open' : '';
   }
@@ -28,33 +26,25 @@ export default class ApplyLeave extends LightningElement {
     this.showApplyLeaveModal = this.showApplyLeaveModal ? !this.showApplyLeaveModal : true;
   }
 
-  // Handle all input field changes
   handleChange(event) {
     const field = event.target.name;
     const value = event.target.value;
     this.formData[field] = value;
-    // Debug logging to help trace issues during local testing
-    // eslint-disable-next-line no-console
-    console.debug(`applyLeave handleChange - field: ${field}, value: ${value}`, JSON.stringify(this.formData));
+    //  console.debug(`applyLeave handleChange - field: ${field}, value: ${value}`, JSON.stringify(this.formData));
   }
 
-  // Handle cancel button click
-  handleCancel() {
+ handleCancel() {
     this.showApplyLeaveModal = false;
-    // Reset form data
     this.formData = {
       fromDate: '',
       toDate: '',
       leaveType: '',
       reason: ''
     };
-    // Notify parent that the form was cancelled (optional)
     this.dispatchEvent(new CustomEvent('leavecancelled'));
   }
 
-  // Handle apply button click
   handleApply() {
-    // Basic validation: require From Date, To Date, Leave Type and Reason
     if (!this.formData.fromDate || !this.formData.toDate || !this.formData.leaveType || !this.formData.reason) {
       this.dispatchEvent(
         new ShowToastEvent({
@@ -108,8 +98,7 @@ export default class ApplyLeave extends LightningElement {
     // For local debugging: if running outside org or Apex failing, simulate success
     const simulateIfNeeded = false; // set true to simulate without calling Apex
     if (simulateIfNeeded) {
-      // eslint-disable-next-line no-console
-      console.info('Simulating createLeaveRequest response (local debug mode)');
+      //console.info('Simulating createLeaveRequest response (local debug mode)');
       const simulatedId = 'a0BsimulatedId000000';
       this.dispatchEvent(
         new ShowToastEvent({
@@ -124,8 +113,6 @@ export default class ApplyLeave extends LightningElement {
       return;
     }
 
-    // Call Apex to create the leave request
-    // Ensure keys match Apex parameter names exactly
     const apexParams = {
       fromDate: params.fromDate,
       toDate: params.toDate,
@@ -133,20 +120,15 @@ export default class ApplyLeave extends LightningElement {
       numberOfDays: params.numberOfDays,
       reason: params.reason
     };
-    // Debug log request
-    // eslint-disable-next-line no-console
-    console.debug('Calling createLeaveRequest with', apexParams);
+    //console.debug('Calling createLeaveRequest with', apexParams);
 
     createLeaveRequest(apexParams)
       .then((res) => {
-        // Debug log response
-        // eslint-disable-next-line no-console
-        console.debug('createLeaveRequest response', res);
+        //console.debug('createLeaveRequest response', res);
         const success = res && (res.success === true || res.success === 'true');
         const message = res && res.message ? res.message : 'No message returned';
         const id = res && res.id ? res.id : null;
         if (success) {
-          // Show success toast
           this.dispatchEvent(
             new ShowToastEvent({
               title: 'Leave Requested',
@@ -154,10 +136,8 @@ export default class ApplyLeave extends LightningElement {
               variant: 'success'
             })
           );
-          // Notify parent components to refresh lists
           this.dispatchEvent(new CustomEvent('leavesubmitted', { detail: { id } }));
         } else {
-          // Show error toast
           this.dispatchEvent(
             new ShowToastEvent({
               title: 'Failed to create leave request',
@@ -165,14 +145,11 @@ export default class ApplyLeave extends LightningElement {
               variant: 'error'
             })
           );
-          // eslint-disable-next-line no-console
-          console.error('Failed to create leave request:', message);
+          //console.error('Failed to create leave request:', message);
         }
       })
       .catch((error) => {
-        // Debug log error
-        // eslint-disable-next-line no-console
-        console.error('createLeaveRequest caught error', error);
+        //console.error('createLeaveRequest caught error', error);
         const errMsg = (error && error.body && error.body.message) ? error.body.message : JSON.stringify(error);
         this.dispatchEvent(
           new ShowToastEvent({
@@ -183,9 +160,7 @@ export default class ApplyLeave extends LightningElement {
         );
       })
       .finally(() => {
-        // Close modal after attempting to apply
         this.showApplyLeaveModal = false;
-
         // Reset form data
         this.formData = {
           fromDate: '',
@@ -195,5 +170,4 @@ export default class ApplyLeave extends LightningElement {
         };
       });
   }
-
 }
