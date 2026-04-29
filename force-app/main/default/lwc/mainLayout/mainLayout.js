@@ -60,6 +60,12 @@ export default class MainLayout extends LightningElement {
     this.showRegister = false;
   }
 
+  handleLeaveUpdated() {
+    if (this.currentUserId) {
+      this.fetchLeavesForUser(this.currentUserId);
+    }
+  }
+
   toggleSidebar() {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }

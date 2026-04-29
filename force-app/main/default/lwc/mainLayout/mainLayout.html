@@ -121,7 +121,7 @@
                 <template if:true={isApprover}>
                   <!-- <c-all-leaves user-id={currentUserId} leaves-data={allUserLeaves} show-approver-actions></c-all-leaves> -->
                   <!-- Show approvals component only to approvers -->
-                  <c-approvals></c-approvals>
+                  <c-approvals onleaveupdated={handleLeaveUpdated}></c-approvals>
                 </template>
                 <template if:false={isApprover} >
                   <p> Only Approver Can Access </p>

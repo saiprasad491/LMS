@@ -173,6 +173,13 @@ export default class Approvals extends LightningElement {
         this.showToast('Success', `Leave request has been ${status.toLowerCase()}.`, 'success');
         // refresh local list
         await this.loadLeaves();
+        this.dispatchEvent(
+          new CustomEvent('leaveupdated', {
+            detail: { requestId: id, status },
+            bubbles: true,
+            composed: true
+          })
+        );
       } else {
         this.showToast('Error', 'Failed to update leave request status.', 'error');
       }

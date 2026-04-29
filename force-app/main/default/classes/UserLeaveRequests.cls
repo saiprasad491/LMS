@@ -30,14 +30,65 @@ public with sharing class UserLeaveRequests {
             if(requestId == null || String.isBlank(status)) {
                 return false;
             }
-            Leave_Request__c lr = [SELECT Id, Status__c FROM Leave_Request__c WHERE Id = :requestId LIMIT 1];
+            Leave_Request__c lr = [SELECT Id, Status__c, Custom_User__c, Leave_Type__c FROM Leave_Request__c WHERE Id = :requestId LIMIT 1];
+            String oldStatus = lr.Status__c;
             lr.Status__c = status;
             update lr;
+
+            Integer delta = 0;
+            if (oldStatus != 'Approved' && status == 'Approved') {
+                delta = 1;
+            } else if (oldStatus == 'Approved' && status != 'Approved') {
+                delta = -1;
+            }
+
+            if (delta != 0) {
+                Boolean adjusted = adjustUserLeavesConsumed(lr.Custom_User__c, lr.Leave_Type__c, delta);
+                if (!adjusted) {
+                    throw new AuraHandledException('Unable to update consumed leaves for the user.');
+                }
+            }
+
             return true;
         } catch (Exception e) {
             System.debug('Error updating leave request status: ' + e.getMessage());
             throw new AuraHandledException('Error updating leave request: ' + e.getMessage());
         }
+    }
+
+    private static Boolean adjustUserLeavesConsumed(Id customUserId, String leaveType, Integer delta) {
+        if (customUserId == null || String.isBlank(leaveType) || delta == 0) {
+            return true;
+        }
+
+        List<User_Leaves__c> userLeaves = [
+            SELECT Id, Total_Consumed__c, Total_Allocated__c
+            FROM User_Leaves__c
+            WHERE Custom_User__c = :customUserId
+            AND Leave_Type__c = :leaveType
+            LIMIT 1
+        ];
+
+        if (userLeaves.isEmpty()) {
+            return false;
+        }
+
+        User_Leaves__c userLeave = userLeaves[0];
+        if (userLeave.Total_Consumed__c == null) {
+            userLeave.Total_Consumed__c = 0;
+        }
+
+        userLeave.Total_Consumed__c += delta;
+        if (userLeave.Total_Consumed__c < 0) {
+            userLeave.Total_Consumed__c = 0;
+        }
+
+        if (userLeave.Total_Allocated__c == null) {
+            userLeave.Total_Allocated__c = 0;
+        }
+
+        update userLeave;
+        return true;
     }
 
     //apply for leave
