@@ -29,8 +29,7 @@ public class CustomUsers {
     @AuraEnabled
     public static List<Leave_Request__c> getUserLeaves(Id userId){
         return [
-            SELECT Name, From_Date__c, To_Date__c, Number_of_days__c,
-                   Reason__c, Leave_Type__c, Manager_Comment__c, Status__c
+            SELECT Name, From_Date__c, To_Date__c, Number_of_days__c, Reason__c, Leave_Type__c, Manager_Comment__c, Status__c
             FROM Leave_Request__c
             WHERE Custom_User__c = :userId
             ORDER BY From_Date__c DESC

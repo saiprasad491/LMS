@@ -19,6 +19,7 @@ public with sharing class UserLeaveRequests {
         return [
             SELECT Id, Name, Custom_User__c, Custom_User__r.Name, From_Date__c, To_Date__c, Leave_Type__c, Number_of_days__c, Status__c, Reason__c, Manager_Comment__c
             FROM Leave_Request__c
+            WHERE Status__c = 'Pending'
             ORDER BY From_Date__c DESC
         ];
     }
